@@ -76,6 +76,6 @@ abstract class quick_template {
             };
         }
 
-        throw new Exception("$key is not a registerable in Smarty");
+        throw new Exception("$key is not registerable in Smarty");
     }
 }
