@@ -6,10 +6,10 @@ template engine.
 ## Installation
 
 ```
-cd ~
-git clone git@github.com:lsuits/quick_template.git
-mv quick_template/smarty3 {MOODLE_ROOT}/lib/smarty3
-mv quick_template/quick_template.php {MOODLE_ROOT}/lib/quick_template.php
+$ cd ~
+$ git clone git@github.com:lsuits/quick_template.git
+$ mv quick_template/smarty3 {MOODLE_ROOT}/lib/smarty3
+$ mv quick_template/quick_template.php {MOODLE_ROOT}/lib/quick_template.php
 ```
 
 ## Usage
