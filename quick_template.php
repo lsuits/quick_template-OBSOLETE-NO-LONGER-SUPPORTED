@@ -2,7 +2,7 @@
 
 abstract class quick {
 
-    public static function render($template, $data= array(), $module='moodle', $custom_funs = array()) {
+    public static function render($template, $data= array(), $module='moodle', $custom_funs = array(), $output = true) {
         global $CFG;
 
         require_once($CFG->libdir . '/smarty3/Smarty.class.php');
@@ -48,7 +48,11 @@ abstract class quick {
             }
         }
 
-        $smarty->display($template);
+        if ($output) {
+            $smarty->display($template);
+        } else {
+            return $smarty->fetch($template);
+        }
     }
 
     private static function map($key, &$smarty) {
