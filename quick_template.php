@@ -1,74 +1,76 @@
 <?php
 
-function quick_render($template, $args = array(), $module='moodle', $custom_funs = array()) {
-    global $CFG;
+abstract class quick {
 
-    require_once($CFG->libdir . '/smarty3/Smarty.class.php');
+    public static function render($template, $data= array(), $module='moodle', $custom_funs = array()) {
+        global $CFG;
 
-    $path = "$CFG->dataroot/templates_c";
-    if(!is_dir($path)) {
-        mkdir($path);
-    }
+        require_once($CFG->libdir . '/smarty3/Smarty.class.php');
 
-    $smarty = new Smarty();
-    $smarty->compile_dir = $path;
-    foreach($args as $key => $value) {
-        $smarty->assign($key, $value);
-    }
+        $path = "$CFG->dataroot/templates_c";
+        if(!is_dir($path)) {
+            mkdir($path);
+        }
 
-    // Lang string modifier
-    $lang = function ($var) use($module) {
-            if(strpos($var, ":")) {
-                list($name, $use_module) = explode(":", $var);
-            } else {
-                $name = $var;
-                $use_module = $module;
-            }
-            return get_string($name, $use_module);
-        };
+        $smarty = new Smarty();
+        $smarty->compile_dir = $path;
+        foreach($args as $key => $value) {
+            $smarty->assign($key, $value);
+        }
 
-    // Set the moodle string function 
-    if(isset($custom_funs['modifier'])) {
-        $custom_funs['modifier']['s'] = $lang;
-    } else {
-        $custom_funs['modifier'] = array('s' => $lang);
-    }
+        // Lang string modifier
+        $lang = function ($var) use($module) {
+                if(strpos($var, ":")) {
+                    list($name, $use_module) = explode(":", $var);
+                } else {
+                    $name = $var;
+                    $use_module = $module;
+                }
+                return get_string($name, $use_module);
+            };
 
-    foreach($custom_funs as $key => $funs) {
-        $smarty_partial = quick_mapper($key, $smarty);
-        foreach($funs as $ident => $fun) {
-            // Check only exists for closure objects
-            if(method_exists($fun, '__invoke')) {
-                $smarty_partial($ident, array($fun, '__invoke')); 
-            } else {
-                $smarty_partial($ident, $fun);
+        // Set the moodle string function 
+        if(isset($custom_funs['modifier'])) {
+            $custom_funs['modifier']['s'] = $lang;
+        } else {
+            $custom_funs['modifier'] = array('s' => $lang);
+        }
+
+        foreach($custom_funs as $key => $funs) {
+            $smarty_partial = self::map($key, $smarty);
+            foreach($funs as $ident => $fun) {
+                // Check only exists for closure objects
+                if(method_exists($fun, '__invoke')) {
+                    $smarty_partial($ident, array($fun, '__invoke'));
+                } else {
+                    $smarty_partial($ident, $fun);
+                }
             }
         }
+
+        $smarty->display($template);
     }
 
-    $smarty->display($template);
-}
+    private static function map($key, &$smarty) {
+        $plugin = array('function', 'block', 'compiler', 'modifier');
+        $filter = array('pre', 'post', 'output', 'variable');
+        if(in_array($key, $plugin)) {
+            return function($ident, $fun) use($key, $smarty) {
+                $smarty->registerPlugin($key, $ident, $fun);
+            };
+        }
 
-function quick_mapper($key, &$smarty) {
-    $plugin = array('function', 'block', 'compiler', 'modifier');
-    $filter = array('pre', 'post', 'output', 'variable');
-    if(in_array($key, $plugin)) {
-        return function($ident, $fun) use($key, $smarty) {
-            $smarty->registerPlugin($key, $ident, $fun);
-        }; 
-    }
+        if(in_array($key, $filter)) {
+            return function($ident, $fun) use($key, $smarty) {
+                $smarty->registerFilter($key, $ident, $fun);
+            };
+        }
 
-    if(in_array($key, $filter)) {
-        return function($ident, $fun) use($key, $smarty) {
-            $smarty->registerFilter($key, $ident, $fun);
-        }; 
+        if($key == "object") {
+            return function($ident, $fun) use($key, $smarty) {
+                $smarty->registerObject($ident, $fun);
+            };
+        }
+        throw new Exception("$key was not a valid register for Smarty");
     }
-
-    if($key == "object") {
-        return function($ident, $fun) use($key, $smarty) {
-            $smarty->registerObject($ident, $fun);
-        }; 
-    }
-    
-    throw new Exception("$key was not a valid register for Smarty");
 }
