@@ -1,6 +1,6 @@
 <?php
 
-abstract class quick {
+abstract class quick_template {
 
     public static function render($template, $data= array(), $module='moodle', $custom_funs = array(), $output = true) {
         global $CFG;
@@ -14,7 +14,7 @@ abstract class quick {
 
         $smarty = new Smarty();
         $smarty->compile_dir = $path;
-        foreach($args as $key => $value) {
+        foreach($data as $key => $value) {
             $smarty->assign($key, $value);
         }
 
