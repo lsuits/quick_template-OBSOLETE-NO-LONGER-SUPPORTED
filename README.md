@@ -26,7 +26,8 @@ __index.tpl__
 ```
 
 __index.php__
-``` scala
+
+```scala
 require_once $CFG->libdir . "/quick_template.php";
 
 $template_data = array(
