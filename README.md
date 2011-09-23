@@ -1,47 +1,82 @@
 # Quick Template
 
-Quick Template is a small Moodle specific wrapper around the [Smarty][smarty]
-template engine.
+Quick Template is a simple [Smarty][smarty] wrapper for Moodle.
 
 ## Installation
 
+After cloning or downloading and unpacking:
+
 ```
-$ cd ~
-$ git clone git@github.com:lsuits/quick_template.git
 $ mv quick_template/smarty3 {MOODLE_ROOT}/lib/smarty3
 $ mv quick_template/quick_template.php {MOODLE_ROOT}/lib/quick_template.php
 ```
 
-## Usage
+## Core Usage
 
-Basic usage for rendering:
+The `|s` filter gives you access to Moodle core language string identifiers.
 
-__index.tpl__
+__Inputs:__
+
+index.tpl
 
 ```
 <div class="greetings">
-    {$starter} Your {"firstname"|s} is {$firstname}.
+    {$greeting} Your {'firstname'|s} is {$name}.
 </div>
 ```
 
-__index.php__
+index.php
 
 ```scala
 require_once $CFG->libdir . "/quick_template.php";
 
 $template_data = array(
-    "starter" => "Hello World!",
-    "firstname" => $USER->firstname
+    "greeting" => "Hello World!",
+    "name" => $USER->firstname
 );
 
 quick_template::render("index.tpl", $template_data);
 ```
 
-__Outputs__
+__Output:__
 
 ```html
 <div class="greetings">
     Hello World! Your First name is Philip
+</div>
+```
+
+## Plugin Usage:
+
+By adding a third argument to `render`, the `|s` filter gives you quick access to a plugin's language strings.
+
+__Inputs:__
+
+index.tpl
+
+```
+<div class="greetings">
+    {$greeting} {"pluginname"|s} is a pretty cool block.
+</div>
+```
+
+index.php
+
+```scala
+require_once $CFG->libdir . "/quick_template.php";
+
+$template_data = array(
+    "greeting" => "Hello World!"
+);
+
+quick_template::render("index.tpl", $template_data, "block_quickmail");
+```
+
+__Output:__
+
+```html
+<div class="greetings">
+    Hello World! Quickmail is a pretty cool block.
 </div>
 ```
 
