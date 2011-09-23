@@ -20,9 +20,8 @@ __index.tpl__
 
 ```
 <div class="greetings">
-    {$starter}
+    {$starter} Your {"firstname"|s} is {$firstname}.
 </div>
-
 ```
 
 __index.php__
@@ -31,8 +30,19 @@ __index.php__
 require_once $CFG->libdir . "/quick_template.php";
 
 $template_data = array(
-    "starter" => "Hello World!"
+    "starter" => "Hello World!",
+    "firstname" => $USER->firstname
 );
 
 quick_template::render("index.tpl", $template_data);
 ```
+
+__Outputs__
+
+```html
+<div class="greetings">
+    Hello World! Your First name is Philip
+</div>
+```
+
+[smarty]: http://www.smarty.net/
