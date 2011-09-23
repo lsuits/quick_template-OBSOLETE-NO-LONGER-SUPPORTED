@@ -79,5 +79,8 @@ __Output:__
     Hello World! Quickmail is a pretty cool block.
 </div>
 ```
+## License
+
+Quick Template adopts the same license as Moodle.
 
 [smarty]: http://www.smarty.net/
