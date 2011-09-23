@@ -75,6 +75,7 @@ abstract class quick_template {
                 $smarty->registerObject($ident, $fun);
             };
         }
-        throw new Exception("$key was not a valid register for Smarty");
+
+        throw new Exception("$key is not a registerable in Smarty");
     }
 }
