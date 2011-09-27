@@ -1,5 +1,7 @@
 <?php
 
+// Written at Louisiana State University
+
 abstract class quick_template {
 
     public static function render($template, $data= array(), $module='moodle', $custom_funs = array(), $output = true) {
