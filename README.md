@@ -7,8 +7,16 @@ Quick Template is a simple [Smarty][smarty] wrapper for Moodle.
 After cloning or downloading and unpacking:
 
 ```
-$ mv quick_template/smarty3 {MOODLE_ROOT}/lib/smarty3
-$ mv quick_template/quick_template.php {MOODLE_ROOT}/lib/quick_template.php
+$ mv quick_template {MOODLE_ROOT}/lib
+```
+
+You can choose to have Quick Template install as a submodule to a local git
+repository, if you so desire.
+
+```
+$ git submodule add git://github.com/lsuits/quick_template.git lib/quick_template
+$ cd lib/quick_template
+$ git checkout v{DESIRED_TAG_VERSION}
 ```
 
 ## Core Usage
@@ -28,7 +36,7 @@ index.tpl
 index.php
 
 ```scala
-require_once $CFG->libdir . "/quick_template.php";
+require_once $CFG->libdir . "/quick_template/lib.php";
 
 $template_data = array(
     "greeting" => "Hello World!",
@@ -63,7 +71,7 @@ index.tpl
 index.php
 
 ```scala
-require_once $CFG->libdir . "/quick_template.php";
+require_once $CFG->libdir . "/quick_template/lib.php";
 
 $template_data = array(
     "greeting" => "Hello World!"
@@ -79,6 +87,59 @@ __Output:__
     Hello World! Quickmail is a pretty cool block.
 </div>
 ```
+
+## Advanced Usage:
+
+Smarty allows dynamic manipulation by registering plugins, functions, objects,
+filters, etc.
+
+Quick Template allows for such registering as well.
+
+For example, it's possible to pass in a closure that utilizes the `$OUTPUT`
+renderer for very specific html rendering (like user pictures).
+
+__Inputs:__
+
+participants.tpl
+
+```
+<div class="box">
+    <table>
+        <tr>
+            <th>{"userpic:moodle"|s}</th>
+            <th>{"fullname:moodle"|s}</th>
+        </tr>
+        {foreach $users as $user}
+            <tr>
+                <td>{picture user=$user}</td>
+                <td>{fullname user=$user}</td>
+            </tr>
+        {/foreach}
+    </table>
+</div>
+```
+
+participants.php
+
+```scala
+require_once $CFG->libdir . '/quick_template/lib.php';
+
+$data = array("users" => $users);
+
+$registers = array(
+    "function" => array(
+        "picture" => function($params, &$smarty) use ($OUTPUT, $COURSE) {
+            return $OUTPUT->user_picture($params["user"]);
+        },
+        "fullname" => function($params, &$smarty) {
+            return fullname($params["user"]);
+        }
+    ),
+);
+
+quick_template::render("participants.tpl", $data, 'block_quickmail', $registers);
+```
+
 ## License
 
 Quick Template adopts the same license as Moodle.
