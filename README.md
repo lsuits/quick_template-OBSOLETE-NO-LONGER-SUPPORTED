@@ -122,7 +122,7 @@ participants.tpl
 participants.php
 
 ```scala
-require_once $CFG->libdir . '/quick_template/lib.php';
+require_once $CFG->libdir . "/quick_template/lib.php";
 
 $data = array("users" => $users);
 
@@ -137,7 +137,7 @@ $registers = array(
     ),
 );
 
-quick_template::render("participants.tpl", $data, 'block_quickmail', $registers);
+quick_template::render("participants.tpl", $data, "block_quickmail", $registers);
 ```
 
 ## License
