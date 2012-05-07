@@ -19,6 +19,27 @@ $ cd lib/quick_template
 $ git checkout v{DESIRED_TAG_VERSION}
 ```
 
+## Configurable Cache
+
+By default, `quick_template` uses `$CFG->dataroot/templates_c` for its cache
+path. This default setting might cause problems for your production setup. You
+can orverride the setting with the `$CFG->smartycachedir` constant.
+
+Set the cache directory in your `config.php` with:
+
+```
+$CFG->smartycachedir = '/path/to/cache';
+```
+
+For example, to make it the site base in a directory called `smartycache`:
+
+```
+$CFG->smartycachedir = dirname(__FILE__) . '/smartycache';
+```
+
+__Note__: Make sure the directory is __writeable__ by either php or the web
+server.
+
 ## Core Usage
 
 The `|s` filter gives you access to Moodle core language string identifiers.

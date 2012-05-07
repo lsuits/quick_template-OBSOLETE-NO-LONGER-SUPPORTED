@@ -9,8 +9,11 @@ abstract class quick_template {
 
         require_once(dirname(__FILE__) . '/smarty3/Smarty.class.php');
 
-        $path = "$CFG->dataroot/templates_c";
-        if(!is_dir($path)) {
+        $path = isset($CFG->smartycachedir) ?
+            $CFG->smartycachedir :
+            "$CFG->dataroot/templates_c";
+
+        if (!is_dir($path)) {
             mkdir($path);
         }
 
@@ -22,14 +25,14 @@ abstract class quick_template {
 
         // Lang string modifier
         $lang = function ($var) use ($module) {
-                if(strpos($var, ":")) {
-                    list($name, $use_module) = explode(":", $var);
-                } else {
-                    $name = $var;
-                    $use_module = $module;
-                }
-                return get_string($name, $use_module);
-            };
+            if (strpos($var, ":")) {
+                list($name, $use_module) = explode(":", $var);
+            } else {
+                $name = $var;
+                $use_module = $module;
+            }
+            return get_string($name, $use_module);
+        };
 
         // Set the moodle string function
         if (isset($custom_funs['modifier'])) {
